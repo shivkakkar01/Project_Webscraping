@@ -1,0 +1,22 @@
+userName: shiv_PptY4j
+accessKey: Mv3yyvYZojvobjdzVewH
+platforms:
+  - os: Windows
+    osVersion: 8.1
+    browserName: Chrome
+    browserVersion: 109.0
+  - os: OS X
+    osVersion: Ventura
+    browserName: Chrome
+    browserVersion: latest
+  - deviceName: iPhone 15 Pro Max
+    osVersion: 17
+    browserName: safari
+    deviceOrientation: portrait
+browserstackLocal: true
+buildName: bstack-demo
+buildIdentifier: ${BUILD_NUMBER}
+projectName: Web Scraping
+debug: true
+networkLogs: true
+consoleLogs: info
