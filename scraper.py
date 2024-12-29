@@ -7,14 +7,24 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from config import BASE_URL, OPINION_SECTION_URL, DOWNLOADS_FOLDER
 
+
 def setup_driver():
     """Setup Selenium WebDriver."""
     options = Options()
     options.add_argument("--headless")  # Run in headless mode (no GUI)
     options.add_argument("--disable-gpu")  # Disable GPU acceleration (optional)
     options.add_argument("--no-sandbox")  # Required for some environments
-    service = Service("C:\Driver\chromedriver.exe")  # No need for full path if added to PATH
+    service = Service("C:\\Driver\\chromedriver.exe")  # Corrected Windows path
     return webdriver.Chrome(service=service, options=options)
+
+
+def sanitize_filename(url):
+    """Sanitize the file name by removing invalid characters."""
+    filename = os.path.basename(url.split("?")[0])  # Remove query parameters
+    # Replace invalid characters with an underscore
+    sanitized_name = "".join(c if c.isalnum() or c in (".", "_", "-") else "_" for c in filename)
+    return sanitized_name
+
 
 def scrape_articles():
     """Scrape article titles, contents, and images."""
@@ -41,7 +51,8 @@ def scrape_articles():
             # Save cover image
             image_path = None
             if cover_image_url:
-                image_path = os.path.join(DOWNLOADS_FOLDER, os.path.basename(cover_image_url))
+                sanitized_filename = sanitize_filename(cover_image_url)
+                image_path = os.path.join(DOWNLOADS_FOLDER, sanitized_filename)
                 download_image(cover_image_url, image_path)
 
             scraped_data.append({
@@ -55,9 +66,10 @@ def scrape_articles():
     driver.quit()
     return scraped_data
 
+
 def download_image(url, path):
     """Download an image from a URL."""
-    os.makedirs(DOWNLOADS_FOLDER, exist_ok=True)
+    os.makedirs(DOWNLOADS_FOLDER, exist_ok=True)  # Create the folder if it doesn't exist
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()  # Raise exception for HTTP errors
@@ -66,6 +78,7 @@ def download_image(url, path):
                 file.write(chunk)
     except Exception as e:
         print(f"Error downloading image: {e}")
+
 
 # Example usage
 if __name__ == "__main__":
